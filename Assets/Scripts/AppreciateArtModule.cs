@@ -58,6 +58,7 @@ public class AppreciateArtModule : MonoBehaviour
     private float _appreciationRequiredDuration = 0.0f;
     private float _defaultGameMusicVolume = 0.0f;
     private bool _solved = false;
+    private bool _other = false;
 
     private void Awake()
     {
@@ -94,6 +95,7 @@ public class AppreciateArtModule : MonoBehaviour
             if (otherModule != null)
             {
                 _module.LogFormat("I'm appreciating some other art - it's called \"{0}\". You should go appreciate it.", otherModule.name);
+                _other = true;
                 _transform = otherModule;
                 Art.SetArt(null);
             }
@@ -156,7 +158,16 @@ public class AppreciateArtModule : MonoBehaviour
 
     private void UpdateForExcessiveArtAppreciation()
     {
+        if (_other)
+            return;
 
+        if (IsAppreciatingArt)
+        {
+            if (!_appreciationStartTime.HasValue)
+                StartAppreciatingArt();
+        }
+        else if (_appreciationStartTime.HasValue)
+            StopAppreciatingArt();
     }
 
     private void StartAppreciatingArt()
